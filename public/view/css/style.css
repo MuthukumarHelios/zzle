@@ -1,0 +1,162 @@
+body {
+
+	font-family: 'Quicksand', sans-serif;
+}
+.container {
+	position: relative;
+}
+.main_bg {
+	position: relative;
+	overflow:hidden;
+	z-index: 0;
+	background-image: url("../icons/background.png");
+}
+.bg-img1 {
+
+    padding-bottom: 30%;
+    position: relative;
+    z-index: -1;
+}
+.bg-img1 h1{
+
+color: #fff;
+}
+.bg-img1 h4{
+
+color: #fff;
+}
+.bg-img1 p{
+
+color: #fff;
+font-size: 16px;
+line-height: 25px;
+padding-top: 20px;
+}
+.logo_img {
+	border-color: 1px solid #000;
+	border-radius: 15px;
+	padding: 15px;
+	width: 100px;
+	height: 100px;
+	background-color: #fff;
+	margin-top: 50px !important;
+	margin:0 auto;
+}
+.bg-img2 {
+    padding: 100px 0 50px;
+    position: relative;
+    z-index: 0;
+}
+.main_bg::after {
+    background-image: url("../icons/bg_down.png");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    content: "";
+    height: 60%;
+    left: 0;
+    position: absolute;
+    top: 65%;
+    transform: rotate(-8deg) scale(1.2);
+    width: 100%;
+    z-index: -1;
+}
+.inr_content {
+	position: relative;
+}
+.bg-img2 p {
+
+	text-align: center;
+	color:#1d1d1d;
+	font-size: 16px;
+	padding-top: 50px;
+	line-height: 25px;
+}
+.list-inlines {
+
+	display: inline-block;
+}
+.bg-img2  h6 {
+
+font-size: 12px !important;
+}
+.bg-img2 .list-inlines {
+
+	background-color: #fff;
+	padding: 5px 40px 5px 40px;
+	border-radius: 40px;
+}
+.bg-img2 a {
+
+color: #1d1d1d;
+}
+.bg-img2 img {
+padding-left: 0;
+}
+.bg-img2 span {
+padding-left: 20px;
+
+}
+.ans_btn a, .ans_btn a:hover {
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+}
+.ans_btn {
+    text-align: center;
+}
+.display-hide {
+
+	display: none;
+}
+.animate-img {
+
+	position:absolute;
+	transform:translate(-50%, -50%);
+	left:50%;
+	top:-29%;
+}
+.quesimg {
+
+	width:200px;
+	height: 200px;
+	margin:0 auto;
+}
+#showhide_quesbtn {
+    color: #fff;
+    font-size: 72px;
+    line-height: 0;
+}
+.change_clr {
+	color: #FAD543 !important;
+}
+
+/*media queries*/
+@media only screen and (max-width: 767px) {
+    .animate-img {
+
+	top:3% !important;
+}
+}
+
+@media  screen and (min-width: 480px) and (max-width: 767px) {
+    .bg-img2 p {
+
+    padding-top: 150px !important;
+
+}
+}
+@media  screen and (min-width: 768px) and (max-width: 991px) {
+    .bg-img1 {
+    padding-bottom: 52% !important;
+
+}
+
+}
+@media  screen and (min-width: 991px) and (max-width: 1199px) {
+    .bg-img1 {
+    padding-bottom: 42% !important;
+
+}
+
+}

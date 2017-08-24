@@ -29,7 +29,6 @@ var authenticate = function(req, res, next) {
         next();
       }
     });
-
   } else {
     return res.status(403).send({
       error: true,
@@ -37,6 +36,7 @@ var authenticate = function(req, res, next) {
     });
   }
 };
+
 module.exports = {
   success: success,
   fail: fail,

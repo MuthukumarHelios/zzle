@@ -36,6 +36,8 @@ let transporter = nodemailer.createTransport({
 // api
 // User register
 
+
+
 router.post("/signup", multer, (req, res) => {
 var salt = randomstring.generate(5),
     hash_with_key = sha512.hmac(salt),
@@ -209,7 +211,7 @@ router.put("/edit/profile", [multer, func.authenticate], (req, res, next) => {
         if(er)return next(er);
         if(c.affectedRows == 0)return res.json({error:true, message: "kinldy provide a valid uniqid"});
         console.log(c);
-        return res.json({error:false, message:"successfully edited"});
+         return res.json({error:false, message:"successfully edited",data:dbdata});
       });
     });
 });
@@ -276,30 +278,32 @@ router.get('/puzzle/list/user', func.authenticate, (req, res, next) => {
        });
    });
 });
+
 router.post('/puzzle/star', [multer,func.authenticate], (req, res, next) => {
    pool.get_connection(q => {
       q.release();
-          console.log("/test");
         pool_query.getConnection((errr, connection) => {
            if(errr) return next(errr);
-          //  var query_string = 'select * from User join Starred_Puzzles on User.id = Starred_Puzzles.userId where Starred_Puzzles.userId = '+req.body.userId+' AND User.salt = '+req.body.uniqid+'';
          var query_string = `select * from User join Starred_Puzzles
                                       on User.id = Starred_Puzzles.userId
-                               where Starred_Puzzles.userId = ${req.body.puzzleid}
+                                where Starred_Puzzles.puzzleId = ${req.body.puzzleid}
                                      and User.salt = "${req.body.uniqid}"`;
            connection.query(query_string, (e, c) => {
              connection.release();
                  if(e)return next(e);
-                 console.log(c);
-                 if(c.length > 0)return func.success(res, "you are allowed to vote only one time");
-                  q.select("id").where({salt: req.body.uniqid}).get("User", (err, cbb) => {
-                    var dbdata = {
-                       userId:cbb[0].id,
-                       puzzleId:req.body.puzzleid
-                   };
+                   if(c.length > 0)return func.success(res, "you are allowed to star only one time");
+                      q.select("id").where({salt: req.body.uniqid}).get("User", (err, cbb) => {
+                        if(err) return next(err);
+                        if(cbb.length == 0)return func.fail(res, "kindly provide a valid uniqid");
+                        var dbdata = {
+                         userId:cbb[0].id,
+                         puzzleId:req.body.puzzleid
+                      };
                 q.insert("Starred_Puzzles", dbdata, (er, cb) =>{
-                  console.log(cb);
-                 if(er) return next(er);
+                 if(er){
+                   if(er.message.slice(0,15) == "ER_NO_REFERENCE") return func.fail(res, "kindly provide a valid puzzle id");
+                    return next(er);
+                  }
                  return func.success(res, "successfully Stared the puzzle");
             });
           });
@@ -307,7 +311,6 @@ router.post('/puzzle/star', [multer,func.authenticate], (req, res, next) => {
        });
     });
  });
-
 
 router.delete('/puzzle/unstar', [multer,func.authenticate], (req, res, next) => {
          pool.get_connection(q => {
@@ -323,11 +326,8 @@ router.delete('/puzzle/unstar', [multer,func.authenticate], (req, res, next) => 
          });
     });
 });
-
 // starred puzzles which was made by the particular user
-
 router.post("/user/puzzles/starred", [multer,func.authenticate], (req, res, next) => {
-
    pool_query.getConnection((e, connection) => {
      if(e)return next(e);
        var query = `SELECT p.puzzleCode,p.title, p.questionTextContent,p.questionImageContent FROM User as u
@@ -366,6 +366,17 @@ router.get("/leaderboard", [multer,func.authenticate], function(req, res, next) 
         });
       });
    });
+
+
+router.get('/view/puzzle', (req, res) => {
+    pool.get_connection(q => {
+      q.release();
+      q.select("title,questionTextContent,questionImageContent,answerTextContent,answerImageContent").where({puzzleCode: req.query.puzzleCode}).get("Puzzle", (er, c) => {
+                  //  var z = JSON.stringify(c);
+     res.render(__dirname+'/public/view/puzzle',{data:c});
+     });
+  });
+});
 
 router.get("/test", [multer,func.authenticate], function(req, res, next) {
     pool.get_connection(q => {

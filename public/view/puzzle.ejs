@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>zzle App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+</head>
+<body>
+  <div class="main_bg">
+    <div class="container-fluid bg-img1">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-sm-6 col-md-offset-3 col-sm-offset-3">
+          <img src="icons/Logo.png" class="logo_img img-responsive img-center">
+          <h1 class="text-center">SCIENCE</h1>
+          <p class="text-center img-center" id="showhide_ques">
+            Image of the question<img class="img-responsive quesimg img-center" src = <%= data[0].questionImageContent %>>
+            <br>question :<%= data[0].questionTextContent %></p>
+
+          <p class="text-center display-hide img-center" id="showhide_ans">
+            <img class="img-responsive quesimg" src = <%= data[0].answerImageContent %>>
+            <br>Answer content: <%= data[0].answerTextContent %></p>
+            <div class="ans_btn">
+            	<a id="showhide_quesbtn">
+	            	<!--<img src="icons/eye.png" class="img-responsive">  -->
+                <div class="">
+                  <i class="fa fa-eye"></i>
+                </div>
+                <h4 class="text-center"></h4>
+	            	<h4 class="text-center"></h4>
+
+            	</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid bg-img2">
+    <div class="animate-img"><img src="icons/group_img.png" class="img-responsive" ></div>
+    <div class="container inr_content">
+      <p>Join the social platform of brain teasers by<br>
+      downloading the Zzle app on</p>
+      <center><a href="#"><h6 class="list-inlines"><img src="icons/apple.png"><span>Download on App Store</span></h6></a></center>
+      <center><a href="#"><h6 class="list-inlines"><img src="icons/google-play.png"><span>Download on Google Play</span></h6></a></center>
+    </div>
+    </div>
+  </div>
+
+<!-- <h1><%= data %></h1> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script>
+  	$("#showhide_quesbtn").click(function() {
+  		$("#showhide_ques").toggle();
+  		$("#showhide_ans").toggle();
+      $(this).toggleClass("change_clr");
+  	})
+  </script>
+  </body>
+  </html>

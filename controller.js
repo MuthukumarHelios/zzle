@@ -97,7 +97,7 @@ router.post("/login", multer, function(req, res, next){
 // social login @User
 
 router.post("/social/login", multer, (req, res, next) => {
-   qb.select("email, googleToken, facebookToken").where({email: req.body.email}).get('User', (er, cb) => {
+   qb.select("salt, email, googleToken, facebookToken").where({email: req.body.email}).get('User', (er, cb) => {
         console.log("inside query");
         console.log(cb);
          if(er)return next(er);
@@ -109,8 +109,9 @@ router.post("/social/login", multer, (req, res, next) => {
              var dbdata = {
                firstName   : req.body.name,
                email       : req.body.email,
-              accountType : "Google/Facebook",
-              ipAddress   : ip[3]
+              accountType  : "Google/Facebook",
+              ipAddress    : ip[3],
+               salt        : randomstring.generate(5)
              };
              console.log(dbdata[social_login_type+"Token"] = req.body.socialToken);
                console.log(dbdata);
@@ -121,8 +122,12 @@ router.post("/social/login", multer, (req, res, next) => {
             });
         }
          if(cb.length > 0){
-          !cb[0].googleToken && !cb[0].facebookToken ?res.json({error: true, message: "email already exists with common login"}):
-          (cb[0].googleToken)? res.json({error:true,message:"you have already logged in with google"}):res.json({error:true,message:"you have already logged in with Facebook"});
+
+          !cb[0].googleToken && !cb[0].facebookToken
+          ?res.json({error: true, message: "email already exists with common login"})
+          :(cb[0].googleToken)
+          ? res.json({error:false,message:"you have already logged in with google",token: cb[0].googleToken,uniqid: cb[0].salt})
+          :res.json({error:false,message:"you have already logged in with Facebook",token: cb[0].facebookToken, uniqid: cb[0].salt});
     }
    });
 });
@@ -156,7 +161,6 @@ router.post("/forgot/password", multer, function(req, res, next) {
              });
      });
 });
-
 
 router.put("/change/password", [multer,func.authenticate], function(req, res, next) {
   qb.select("email, salt").where({salt: req.body.uniqid}).get("User", (er, cb) =>{
@@ -278,7 +282,7 @@ router.get('/puzzle/list', func.authenticate, (req, res, next) => {
              cbb.map((value) => {
                   test.push(value.id);
              });
-         console.log(test);
+        //  console.log(test);
               //  litle bit confusing
                    var count = new Map([...new Set(test)].map(
                      x =>[x, test.filter(y => y == x).length]
@@ -286,7 +290,7 @@ router.get('/puzzle/list', func.authenticate, (req, res, next) => {
        console.log(count);
        cb.map((value, index) => {
         var s =  count.get(value.id);
-           console.log(s);
+          //  console.log(s);
            if(!s){
                 value["No_of_starts"] = 0;}
            else{

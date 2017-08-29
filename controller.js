@@ -32,7 +32,7 @@ let transporter = nodemailer.createTransport({
                       pass: '9551447625'
                   }
               });
-
+var _ = require('lodash');
 // api
 // User register
 
@@ -255,17 +255,48 @@ router.post("/puzzle/create", [multer,func.authenticate], function(req, res, nex
   });
 });
 
+// which shows the availabe puzzles using puzzleCategory and count the number of star
 router.get('/puzzle/list', func.authenticate, (req, res, next) => {
-  pool.get_connection(q => {
-    console.log("/test");
-      q.select("*").get("Puzzle", (er, cb) =>{
-        q.release();
+
+ pool_query.getConnection((err, conn) => {
+    if(err) return next(err);
+
+       if(req.query.puzzleCategory){
+         search = `where puzzleCategory = ${req.query.puzzleCategory}`;
+       }else{
+           search = '';
+       }
+    var query_string = `select * from Puzzle ${search}`;
+       conn.query(query_string , (er, cb) => {
+         conn.release();
          if(er) return next(er);
-          return func.success(res, cb);
-     });
+         var query_string1 = `select Puzzle.id from Puzzle
+         join Starred_Puzzles on Puzzle.id = Starred_Puzzles.puzzleId`;
+         conn.query(query_string1 , (er, cbb) => {
+         var test = [];
+           var occurence = {};
+             cbb.map((value) => {
+                  test.push(value.id);
+             });
+         console.log(test);
+              //  litle bit confusing
+                   var count = new Map([...new Set(test)].map(
+                     x =>[x, test.filter(y => y == x).length]
+                   ));
+       console.log(count);
+       cb.map((value, index) => {
+        var s =  count.get(value.id);
+           console.log(s);
+           if(!s){
+                value["No_of_starts"] = 0;}
+           else{
+             value["No_of_starts"] = s;}
+        });
+      return func.success(res, cb);
+      });
+    });
   });
 });
-
 router.get('/puzzle/list/user', func.authenticate, (req, res, next) => {
   pool.get_connection(q => {
     console.log("/test");
@@ -312,6 +343,7 @@ router.post('/puzzle/star', [multer,func.authenticate], (req, res, next) => {
     });
  });
 
+
 router.delete('/puzzle/unstar', [multer,func.authenticate], (req, res, next) => {
          pool.get_connection(q => {
           q.release();
@@ -326,6 +358,7 @@ router.delete('/puzzle/unstar', [multer,func.authenticate], (req, res, next) => 
          });
     });
 });
+
 // starred puzzles which was made by the particular user
 router.post("/user/puzzles/starred", [multer,func.authenticate], (req, res, next) => {
    pool_query.getConnection((e, connection) => {
